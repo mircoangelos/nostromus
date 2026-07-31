@@ -1,0 +1,10 @@
+
+    NOSTROMUS SECURITY REPORT
+    =========================
+    ID: REP_20260508_163152
+    Date: 2026-05-08 16:31:52.428158
+    Severidad: MEDIUM
+    Details: Suspicious activity detected for user malicious_user with 5 failed attempts from IP 192.168.1.100
+    =========================
+    Generado por: Nostromus Agent
+    

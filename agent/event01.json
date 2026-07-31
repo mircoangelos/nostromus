@@ -1,0 +1,4 @@
+{
+  "event_type": "SECURITY_EVENT",
+  "data": { "user_id": "malicious_user", "attempts": 5, "ip": "192.168.1.100" }
+}

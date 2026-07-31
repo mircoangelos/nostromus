@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL para Keycloak + Nostromus
+  postgres:
+    image: postgres:15
+    container_name: postgres_nostromus
+    environment:
+      POSTGRES_DB: nostromus
+      POSTGRES_USER: nostromus
+      POSTGRES_PASSWORD: nostromuspass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nostromus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Keycloak para Autenticación
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak_nostromus
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloakpass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["start-dev", "--import-realm"]
+
+  # RabbitMQ para Event Bus
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq_nostromus
+    ports:
+      - "5672:5672"      # AMQP
+      - "15672:15672"    # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Python FastAPI Backend
+  backend:
+    image: python:3.11-slim
+    container_name: backend_nostromus
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    environment:
+      PYTHONUNBUFFERED: 1
+      DATABASE_URL: postgresql://nostromus:nostromuspass@postgres:5432/nostromus
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      KEYCLOAK_URL: http://keycloak:8080
+    command: sh -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  rabbitmq_data:

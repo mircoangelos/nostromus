@@ -1,0 +1,10 @@
+
+    NOSTROMUS SECURITY REPORT
+    =========================
+    ID: REP_20260508_163330
+    Date: 2026-05-08 16:33:30.886828
+    Severidad: CRITICAL
+    Details: Brute force attack detected from IP: 185.234.12.89
+    =========================
+    Generado por: Nostromus Agent
+    

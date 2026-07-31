@@ -1,17 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import keycloak from "./auth/keycloakConnection";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
+  <ReactKeycloakProvider
+    authClient={keycloak}
+    initOptions={{
+      onLoad: "login-required",
+      checkLoginIframe: false,
+      // onLoad: "check-sso",
+      // silentCheckSsoRedirectUri: window.location.origin + "/silent-check-sso.html",
+    }}
+  >
     <App />
-  </React.StrictMode>
+  </ReactKeycloakProvider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

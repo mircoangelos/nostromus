@@ -1,70 +1,261 @@
-# Getting Started with Create React App
+# 🛡️ Nostromus - Incident Response & AI Security Monitor
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sistema **100% Python event-driven** de **detección y respuesta a incidentes** con capacidades de IA integrada. Monitorea eventos de seguridad y performance, analiza contexto con Google Gemini, y ejecuta acciones automáticas.
 
-## Available Scripts
+## 📊 Arquitectura Completa
 
-In the project directory, you can run:
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    React Frontend                            │
+│           (Keycloak Auth + Incident Reports)                 │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ HTTP/REST
+┌──────────────────────▼──────────────────────────────────────┐
+│              FastAPI Backend (Python 3.11)                   │
+│  - /api/incidents    (Create incidents)                      │
+│  - /api/reports      (View reports & analytics)              │
+│  - Keycloak Integration + CORS                               │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ AMQP
+┌──────────────────────▼──────────────────────────────────────┐
+│              RabbitMQ Event Bus (Queue Routing)              │
+│  - security_events ──→ AI Agent                              │
+│  - performance_events ──→ AI Agent                           │
+│  - operational_events ──→ Workers                            │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+        ▼              ▼              ▼
+   ┌─────────┐   ┌─────────┐   ┌──────────┐
+   │ AI Agent│   │ Workers │   │ Analytics│
+   │ (Gemini)│   │(Actions)│   │ (Future) │
+   └────┬────┘   └────┬────┘   └──────────┘
+        │             │
+        └──────────┬──────────┘
+                   │ SQL
+        ┌──────────▼──────────┐
+        │   PostgreSQL DB     │
+        │ - Incidents         │
+        │ - Reports           │
+        │ - Audit Trail       │
+        └─────────────────────┘
+```
 
-### `npm start`
+## 🚀 Stack Tecnológico
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Frontend (React 18 + TypeScript)
+- Dashboard de reportes en tiempo real
+- Panel de administración
+- Autenticación SSO con Keycloak
+- Control de roles (admin, sales, viewer)
+- DOMPurify para XSS prevention
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Backend (FastAPI + Python 3.11) ⭐ TODO PYTHON
+- REST API con OpenAPI/Swagger
+- Autenticación Keycloak
+- Integración con RabbitMQ (Producer)
+- Rutas protegidas por roles
+- Async/await para máximo rendimiento
 
-### `npm test`
+### AI Agent (Google Gemini + Python)
+- Procesamiento de eventos de seguridad
+- Análisis automático de performance
+- Generación de reportes automáticos
+- Ejecución de acciones (lock account, alert, etc.)
+- Consumidor RabbitMQ con AFC (Automatic Function Calling)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Message Queue (RabbitMQ)
+- Event Bus descentralizado
+- 3 queues: security_events, performance_events, operational_events
+- Persistent delivery
+- Dead letter queues (próximamente)
 
-### `npm run build`
+### Base de Datos (PostgreSQL 15)
+- Incidentes y eventos
+- Reportes generados
+- Audit trail completo
+- Sesiones de Keycloak
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Autenticación (Keycloak)
+- OIDC/OAuth2
+- RBAC (Role-Based Access Control)
+- Multi-tenancy (futuro)
+- SSO integration
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📋 Requisitos
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Node.js 18+
+- Python 3.10+
+- Docker & Docker Compose
+- Google Gemini API Key
 
-### `npm run eject`
+## ⚙️ Setup Local (TODO PYTHON 🐍)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Requisitos Previos
+- Python 3.11+
+- Node.js 18+ (solo para React Frontend)
+- Docker & Docker Compose
+- Google Gemini API Key
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 1. Clonar y configurar variables
+```bash
+git clone <repo>
+cd xss-example
+cp .env.example .env
+# Editar .env con tus valores
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 2. Iniciar infraestructura (Docker)
+```bash
+docker-compose up -d
+# Esperará a que todos los servicios estén listos
+# PostgreSQL (5432) ✓
+# Keycloak (8080) ✓
+# RabbitMQ (5672) ✓
+# FastAPI Backend (8000) ✓
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3. Configurar Keycloak (http://localhost:8080)
+- **Admin**: `admin / admin`
+- Crear **Realm**: `react-keycloak`
+- Crear **Client**: `FE-keycloak` (con CORS a http://localhost:3000)
+- Crear **Roles**: `admin`, `sales`, `viewer`
+- Crear **Users** con roles asignados
 
-## Learn More
+### 4. Iniciar Frontend (React)
+```bash
+npm install
+npm start
+# Abrirá http://localhost:3000
+# Login: usa usuario de Keycloak
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 5. FastAPI Backend (ya corre en Docker)
+- **URL**: http://localhost:8000
+- **Docs**: http://localhost:8000/docs (Swagger UI)
+- **Health**: http://localhost:8000/health
+- **Crear evento de prueba**: POST http://localhost:8000/api/incidents
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 6. Iniciar Python Agent (RabbitMQ Consumer)
+```bash
+cd agent
 
-### Code Splitting
+# Crear virtual environment
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+# Instalar dependencias
+pip install -r requirements.txt
 
-### Analyzing the Bundle Size
+# Iniciar consumer
+python rabbitmq_consumer.py
+# Esperará eventos en: security_events, performance_events, operational_events
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 7. Ver RabbitMQ Management
+- **URL**: http://localhost:15672
+- **User**: guest / guest
+- Ver queues, mensajes, y consumers activos
 
-### Making a Progressive Web App
+## 📁 Estructura de Carpetas
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+xss-example/
+├── src/                          # React Frontend
+│   ├── auth/                     # Keycloak integration
+│   ├── features/                 # Pages (sales, admin, home)
+│   ├── hooks/                    # Custom hooks
+│   ├── reducers/                 # State management
+│   └── mocks/                    # Mock handlers
+├── api/                          # Express Backend
+│   ├── index.js                  # Server entry
+│   └── routes/                   # API endpoints
+├── agent/                        # Python AI Agent
+│   ├── firstbornAgent.py         # Main agent
+│   ├── generatorFirstVersion.py  # Action handlers
+│   ├── agentSkills.md            # Agent instructions
+│   ├── event*.json               # Demo events
+│   └── requirements.txt          # Python deps
+├── docker-compose.yml            # Services config
+├── package.json                  # Node deps
+└── .env.example                  # Environment template
+```
 
-### Advanced Configuration
+## 🔄 Flujo de Eventos (Actual - Fase 1)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. **Event Ingestion**: Agent lee eventos JSON locales
+2. **Reasoning**: Gemini analiza el evento
+3. **Actions**: Agent ejecuta tools automáticas
+4. **Reporting**: Genera reportes en disco
 
-### Deployment
+## 🔄 Flujo Esperado (Fase 2 - RabbitMQ)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. App emite evento → Incident Service
+2. Incident Service → RabbitMQ
+3. RabbitMQ → AI Agent Service
+4. Agent → Action Worker
+5. Worker → Database
 
-### `npm run build` fails to minify
+## 📊 Casos de Uso
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Seguridad
+- 🔴 **Brute Force**: Login fallidos (5+) → Bloquear cuenta
+- 🟠 **Anomalía**: Acceso desde IP desconocida → Alert
+- 🟡 **Session**: Expiración de sesión → Re-auth
+
+### Performance
+- ⚡ **Query Lenta**: Detectar queries > 2s → Optimizar índices
+- 💾 **Memory Leak**: Alta memoria → Alert a SRE
+- 📡 **Latencia**: API > 500ms → Escalar
+
+## 🔐 Seguridad Implementada
+
+- ✅ Autenticación con Keycloak + JWT
+- ✅ Autorización basada en roles (RBAC)
+- ✅ DOMPurify para prevenir XSS
+- ✅ CORS configurado
+- ⏳ Rate limiting (próximamente)
+- ⏳ Audit logs (próximamente)
+
+## 🧪 Testing
+
+```bash
+# Frontend tests
+npm test
+
+# Backend tests (cuando estén implementados)
+cd api && npm test
+
+# Agent tests (cuando estén implementados)
+cd agent && python -m pytest
+```
+
+## 📈 Roadmap
+
+- [ ] Implementar RabbitMQ
+- [ ] Crear Incident Service (Python/Node)
+- [ ] Implementar Report Worker
+- [ ] Dashboard de reportes en tiempo real
+- [ ] Audit trail completo
+- [ ] WebSocket para actualizaciones en vivo
+- [ ] Métricas con Prometheus
+- [ ] Alertas con Slack/Teams
+
+## 🤝 Contribuir
+
+```bash
+git checkout -b feature/tu-feature
+git commit -am "Descripción clara"
+git push origin feature/tu-feature
+```
+
+## 📞 Soporte
+
+- 📧 miguel.villanueva@sciencelogic.com
+- 📚 Documentación: (próximamente)
+- 🐛 Issues: GitHub Issues
+
+---
+
+**Nostromus v0.1.0** | Seguridad y IA al servicio de tus aplicaciones 🚀

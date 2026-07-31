@@ -1,0 +1,187 @@
+{
+  "realm": "nostromus",
+  "enabled": true,
+  "displayName": "Nostromus - Incident Response System",
+  "defaultSignatureAlgorithm": "RS256",
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Full access to Nostromus system"
+      },
+      {
+        "name": "threat_analyst",
+        "description": "Can analyze incidents and generate reports"
+      },
+      {
+        "name": "operator",
+        "description": "Can manage operational tasks"
+      },
+      {
+        "name": "viewer",
+        "description": "Can view incidents and reports only"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "nostromus-client",
+      "name": "Nostromus Client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "publicClient": false,
+      "secret": "nostromus-secret-key",
+      "redirectUris": [
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000"
+      ],
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "fullScopeAllowed": true
+    }
+  ],
+  "users": [
+    {
+      "username": "miguel",
+      "enabled": true,
+      "email": "miguel.villanueva@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Miguel",
+      "lastName": "Villanueva",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "miguel"
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    },
+    {
+      "username": "ariel",
+      "enabled": true,
+      "email": "Ariel.Ricaldez@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Ariel",
+      "lastName": "Ricaldez",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ariel"
+        }
+      ],
+      "realmRoles": [
+        "threat_analyst"
+      ]
+    },
+    {
+      "username": "jhonny",
+      "enabled": true,
+      "email": "Jhonny.herbas@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Jhonny",
+      "lastName": "Herbas",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "jhonny"
+        }
+      ],
+      "realmRoles": [
+        "threat_analyst"
+      ]
+    },
+    {
+      "username": "rodney",
+      "enabled": true,
+      "email": "rodney.maida@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Rodney",
+      "lastName": "Maida",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "rodney"
+        }
+      ],
+      "realmRoles": [
+        "threat_analyst"
+      ]
+    },
+    {
+      "username": "gramsci",
+      "enabled": true,
+      "email": "gramsci.hermozo@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Gramsci",
+      "lastName": "Hermozo",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gramsci"
+        }
+      ],
+      "realmRoles": [
+        "threat_analyst"
+      ]
+    },
+    {
+      "username": "xavier",
+      "enabled": true,
+      "email": "xavier.murillo@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Xavier",
+      "lastName": "Murillo",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "xavier"
+        }
+      ],
+      "realmRoles": [
+        "threat_analyst"
+      ]
+    },
+    {
+      "username": "diego",
+      "enabled": true,
+      "email": "diego.reyes@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Diego",
+      "lastName": "Reyes",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "diego"
+        }
+      ],
+      "realmRoles": [
+        "operator"
+      ]
+    },
+    {
+      "username": "sofia",
+      "enabled": true,
+      "email": "sofia.gomez@jalasoft.com",
+      "emailVerified": true,
+      "firstName": "Sofia",
+      "lastName": "Gomez",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "sofia"
+        }
+      ],
+      "realmRoles": [
+        "viewer"
+      ]
+    }
+  ]
+}

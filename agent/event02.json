@@ -1,0 +1,4 @@
+{
+  "event_type": "SECURITY_EVENT",
+  "data": { "user_id": "forgetful_user", "attempts": 2, "ip": "10.0.0.5" }
+}

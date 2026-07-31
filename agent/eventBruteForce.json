@@ -1,0 +1,11 @@
+{
+  "event_type": "SECURITY_EVENT",
+  "source": "Auth-Gateway",
+  "data": {
+    "user_id": "admin",
+    "attempts": 45,
+    "ip": "185.234.12.89",
+    "user_agent": "Hydra/9.2 (Network Login Cracker)",
+    "timestamp": "2026-05-04T13:45:00Z"
+  }
+}
